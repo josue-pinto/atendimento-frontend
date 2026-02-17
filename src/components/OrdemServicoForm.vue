@@ -1,30 +1,60 @@
 <script setup>
-import { reactive } from 'vue'
+import { reactive, watch } from 'vue'
 
-const emit = defineEmits(['criada'])
+const emit = defineEmits(['criada', 'atualizada', 'cancelar'])
+
+const props = defineProps({
+  loading: Boolean,
+  editando: Object
+})
 
 const form = reactive({
   cliente: '',
   equipamento: '',
-  descricao: ''
+  descricao: '',
+  status: 'ABERTA'
 })
 
-const props = defineProps({
-  loading: Boolean
-})
+watch(() => props.editando, (os) => {
+  if (os) {
+    form.cliente = os.cliente
+    form.equipamento = os.equipamento
+    form.descricao = os.descricao
+    form.status = os.status
+  } else {
+    limpar()
+  }
+}, { immediate: true })
 
-function submit() {
-  if (!form.cliente || !form.equipamento || !form.descricao) return
-  emit('criada', { ...form })
+function limpar() {
   form.cliente = ''
   form.equipamento = ''
   form.descricao = ''
+  form.status = 'ABERTA'
+}
+
+function submit() {
+  if (!form.cliente || !form.equipamento || !form.descricao) return
+  if (props.editando) {
+    emit('atualizada', { id: props.editando.id, ...form })
+  } else {
+    emit('criada', { ...form })
+  }
+  limpar()
+}
+
+function cancelar() {
+  limpar()
+  emit('cancelar')
 }
 </script>
 
 <template>
   <div class="form-card">
-    <h2>Nova Ordem de Serviço</h2>
+    <div class="form-header">
+      <h2>{{ editando ? 'Editar Ordem de Serviço' : 'Nova Ordem de Serviço' }}</h2>
+      <button v-if="editando" class="btn-cancelar" @click="cancelar">Cancelar</button>
+    </div>
     <form @submit.prevent="submit">
       <div class="form-group">
         <label for="cliente">Cliente</label>
@@ -56,8 +86,16 @@ function submit() {
           required
         ></textarea>
       </div>
-      <button type="submit" :disabled="loading">
-        {{ loading ? 'Salvando...' : 'Abrir Ordem de Serviço' }}
+      <div v-if="editando" class="form-group">
+        <label for="status">Status</label>
+        <select id="status" v-model="form.status">
+          <option value="ABERTA">ABERTA</option>
+          <option value="EM ANDAMENTO">EM ANDAMENTO</option>
+          <option value="FINALIZADA">FINALIZADA</option>
+        </select>
+      </div>
+      <button type="submit" class="btn-submit" :disabled="loading">
+        {{ loading ? 'Salvando...' : (editando ? 'Salvar Alterações' : 'Abrir Ordem de Serviço') }}
       </button>
     </form>
   </div>
@@ -71,10 +109,33 @@ function submit() {
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
-h2 {
-  margin: 0 0 1.5rem 0;
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.form-header h2 {
+  margin: 0;
   font-size: 1.25rem;
   color: #1a1a2e;
+}
+
+.btn-cancelar {
+  padding: 0.4rem 1rem;
+  background: #f3f4f6;
+  color: #374151;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-cancelar:hover {
+  background: #e5e7eb;
 }
 
 .form-group {
@@ -90,7 +151,8 @@ label {
 }
 
 input,
-textarea {
+textarea,
+select {
   width: 100%;
   padding: 0.65rem 0.85rem;
   border: 1.5px solid #d1d5db;
@@ -99,10 +161,12 @@ textarea {
   font-family: inherit;
   transition: border-color 0.2s;
   box-sizing: border-box;
+  background: #fff;
 }
 
 input:focus,
-textarea:focus {
+textarea:focus,
+select:focus {
   outline: none;
   border-color: #4f46e5;
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
@@ -112,7 +176,7 @@ textarea {
   resize: vertical;
 }
 
-button {
+.btn-submit {
   width: 100%;
   padding: 0.75rem;
   margin-top: 0.5rem;
@@ -126,11 +190,11 @@ button {
   transition: background 0.2s;
 }
 
-button:hover:not(:disabled) {
+.btn-submit:hover:not(:disabled) {
   background: #4338ca;
 }
 
-button:disabled {
+.btn-submit:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }

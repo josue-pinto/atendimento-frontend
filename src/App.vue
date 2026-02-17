@@ -7,6 +7,7 @@ import OrdemServicoList from './components/OrdemServicoList.vue'
 const ordens = ref([])
 const loadingList = ref(false)
 const loadingForm = ref(false)
+const editando = ref(null)
 
 async function carregarOrdens() {
   loadingList.value = true
@@ -32,6 +33,28 @@ async function criarOrdem(os) {
   }
 }
 
+async function atualizarOrdem(os) {
+  loadingForm.value = true
+  try {
+    await api.put(`/os/${os.id}`, os)
+    editando.value = null
+    await carregarOrdens()
+  } catch (err) {
+    console.error('Erro ao atualizar ordem:', err)
+  } finally {
+    loadingForm.value = false
+  }
+}
+
+function editarOrdem(os) {
+  editando.value = { ...os }
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+function cancelarEdicao() {
+  editando.value = null
+}
+
 onMounted(carregarOrdens)
 </script>
 
@@ -43,8 +66,18 @@ onMounted(carregarOrdens)
     </header>
 
     <main class="app-content">
-      <OrdemServicoForm :loading="loadingForm" @criada="criarOrdem" />
-      <OrdemServicoList :ordens="ordens" :loading="loadingList" />
+      <OrdemServicoForm
+        :loading="loadingForm"
+        :editando="editando"
+        @criada="criarOrdem"
+        @atualizada="atualizarOrdem"
+        @cancelar="cancelarEdicao"
+      />
+      <OrdemServicoList
+        :ordens="ordens"
+        :loading="loadingList"
+        @editar="editarOrdem"
+      />
     </main>
   </div>
 </template>

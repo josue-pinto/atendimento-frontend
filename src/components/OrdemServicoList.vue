@@ -1,4 +1,6 @@
 <script setup>
+const emit = defineEmits(['editar'])
+
 defineProps({
   ordens: Array,
   loading: Boolean
@@ -40,6 +42,7 @@ function statusClass(status) {
             <th>Descrição</th>
             <th>Status</th>
             <th>Entrada</th>
+            <th>Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -54,6 +57,9 @@ function statusClass(status) {
               </span>
             </td>
             <td>{{ formatDate(os.dataEntrada) }}</td>
+            <td>
+              <button class="btn-editar" @click="emit('editar', os)">Editar</button>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -124,7 +130,7 @@ tr:hover {
 }
 
 .desc-col {
-  max-width: 250px;
+  max-width: 200px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -153,5 +159,23 @@ tr:hover {
 .status-finalizada {
   background: #d1fae5;
   color: #065f46;
+}
+
+.btn-editar {
+  padding: 0.35rem 0.85rem;
+  background: #eef2ff;
+  color: #4f46e5;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1.5px solid #c7d2fe;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-editar:hover {
+  background: #4f46e5;
+  color: white;
+  border-color: #4f46e5;
 }
 </style>
