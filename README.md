@@ -1,38 +1,72 @@
-# atendimento-frontend
+# Atendimento Frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+Interface web para gerenciamento de ordens de servico tecnico, construida com Vue 3 e Vite.
 
-## Recommended IDE Setup
+## Tecnologias
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- **Vue 3** (Composition API)
+- **Vite 7** - build tool
+- **Axios** - requisicoes HTTP
+- **CSS** customizado - UI moderna com tema indigo/violeta
 
-## Recommended Browser Setup
+## Funcionalidades
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+- Criar novas ordens de servico (cliente, equipamento, descricao)
+- Listar todas as ordens de servico em tabela
+- Status com badges coloridos (ABERTA, EM ANDAMENTO, FINALIZADA)
+- Layout responsivo
 
-## Customize configuration
+## Estrutura
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+```
+src/
+├── assets/
+│   └── main.css                  # Estilos globais
+├── components/
+│   ├── OrdemServicoForm.vue      # Formulario de nova OS
+│   └── OrdemServicoList.vue      # Tabela de ordens
+├── services/
+│   └── api.js                    # Axios conectado ao backend
+├── App.vue                       # Componente principal
+└── main.js                       # Entry point
+```
 
-## Project Setup
+## Configuracao Local
 
-```sh
+### Pre-requisitos
+
+- Node.js 20+ ou 22+
+
+### Instalar dependencias
+
+```bash
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+### Executar em desenvolvimento
 
-```sh
+```bash
 npm run dev
 ```
 
-### Compile and Minify for Production
+Acesse http://localhost:5173
 
-```sh
+### Build para producao
+
+```bash
 npm run build
 ```
+
+## Deploy
+
+- **Hosting:** [Vercel](https://vercel.com)
+- **URL de producao:** https://atendimento-frontend-six.vercel.app
+
+## Backend
+
+A API REST Spring Boot esta em um repositorio separado:
+[service_order_manager](https://github.com/josue-pinto/service_order_manager)
+
+## Licenca
+
+Este projeto e de uso academico/pessoal.
